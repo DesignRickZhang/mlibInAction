@@ -20,7 +20,7 @@ object FPGrowthCountLoadTest {
     sc = spark.sparkContext
 
     val model = FPGrowthModel.load(sc, FPGrowthCountGenTest.savePath)
-
+  model.freqItemsets.cache()
 
 
 
@@ -29,8 +29,11 @@ object FPGrowthCountLoadTest {
     }
 
     freqItemsets3.foreach(println)
-
-
+    val targetItem = "r"
+    println(s"containe target:${targetItem}")
+    model.freqItemsets.filter(itemset=> itemset.items.contains(targetItem)).collect().map { itemset =>
+      (itemset.items.toSet, itemset.freq)
+    }.foreach(println)
 
     sc.stop()
   }
